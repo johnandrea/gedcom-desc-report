@@ -36,7 +36,7 @@ If missing the name of the top person is used.
 
 --dots = number of dots
 
-Number of dots to prefix every line. Default is 4.
+Number of dots to prefix every line. Default is 4. If less than 1, tabs will be used.
 
 --maxgen = maximum generations to show. If missing, there is no limit.
 
