@@ -3,9 +3,9 @@ Create a descendent report from a genealogy GEDCOM file to be used on the comman
 
 The output is an RTF formatted file which can be converted to PDF or other formats.
 Converting to PDF on the command line can be performed with LibreOffice:
-``
+'''
 libreoffice --headless --convert-to pdf filename.rtf
-```
+'''
 
 ## Options ##
 
