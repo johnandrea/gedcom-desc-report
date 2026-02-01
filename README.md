@@ -34,6 +34,10 @@ Include birth and death years with the names.
 
 If missing the name of the top person is used.
 
+--dots = number of dots
+
+Number of dots to prefix every line. Default is 4.
+
 --maxgen = maximum generations to show. If missing, there is no limit.
 
 --libpath=directory-containing-readgedcom
