@@ -18,7 +18,7 @@ import os
 
 
 def get_version():
-    return '0.1.1'
+    return '0.1.2'
 
 
 def load_my_module( module_name, relative_path ):
@@ -216,10 +216,10 @@ def escape_rtf( s ):
 
 
 def output_header( indi, title ):
-    # regular text will be Times New Roman size 14
+    # regular text will be Times New Roman size 28 > 14
     # and Courier for the line prefix
-    # title text will be Times New Roman size 30
-    # footer text will be Helvetica size 18
+    # title text will be Times New Roman size 50 > 25
+    # footer text will be Helvetica size 30 > 15
     print( '{\\rtf1\\ansi\\deff0' )
     print( '' )
     print( '{\\fonttbl' )
@@ -231,14 +231,14 @@ def output_header( indi, title ):
     print( '\\deflang1033\\widowctrl' )
     print( '\\margl275 \\margr275 \\margt275 \\margb275' )
     print( '' )
-    print( '{\\pard\\b1\\fs30' )
+    print( '{\\pard\\b1\\fs50' )
     if title:
        print( escape_rtf( title ) )
     else:
        print( 'Descendant list of', get_name(indi, name_style) )
     print( ' \\b0\\par}' )
     print( '' )
-    print( '{\\footer\\f1\\fs18\\b1\\qr' )
+    print( '{\\footer\\f1\\fs30\\b1\\qr' )
     print( datetime.today().strftime('%Y-%b-%d %H:%M') )
     print( '\\b0\\footer}' )
     print( '' )
@@ -250,7 +250,7 @@ def output_trailer():
 
 def output_single_name( name, prefix ):
     # the prefix ought to be fixed width font to make spouse names align
-    print( '\\line\\f2\\fs14{' + prefix + ' }\\f0\\fs14{' + name + '}' )
+    print( '\\line\\f2\\fs28{' + prefix + ' }\\f0\\fs28{' + name + '}' )
 
 
 def output_family_names( indi, fam, gen, dots ):
