@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """
 Create a descendent report from a gedcom file.
 
@@ -18,7 +16,7 @@ import os
 
 
 def get_version():
-    return '0.3'
+    return '1.0'
 
 
 def load_my_module( module_name, relative_path ):
@@ -67,10 +65,10 @@ def get_program_options():
     arg_help = 'Show version then exit.'
     parser.add_argument( '--version', action='version', version=get_version() )
 
-    arg_help = 'Number of dots as prefix. Output format. Default: ' + str(results['dots'])
+    arg_help = 'Number of dots as prefix. Default: ' + str(results['dots'])
     parser.add_argument( '--dots', default=str(results['dots']), type=int, help=arg_help )
 
-    arg_help = 'Maximum number of generations. Output format. If missing there is no limit'
+    arg_help = 'Maximum number of generations. If missing there is no limit'
     parser.add_argument( '--maxgen', default=str(results['maxgen']), type=int, help=arg_help )
 
     arg_help = 'Title. If missing: name of top pereon.'
