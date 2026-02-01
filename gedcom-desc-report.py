@@ -18,7 +18,7 @@ import os
 
 
 def get_version():
-    return '0.1.2'
+    return '0.2'
 
 
 def load_my_module( module_name, relative_path ):
@@ -289,7 +289,7 @@ def output( start_indi, max_gen, dots ):
 
 
 # the type of name converted name suited for rtf output
-name_style = 'html'
+name_style = 'display'
 
 options = get_program_options()
 
