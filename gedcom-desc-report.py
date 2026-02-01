@@ -289,7 +289,10 @@ indi_found = find_person( options['personid'], options['iditem'] )
 if indi_found:
    if len( indi_found ) == 1:
       output_header( indi_found[0], options['title'] )
-      output( indi_found[0], options['maxgen'], '.' * options['dots'] )
+      dots = '\\tab'
+      if options['dots'] > 0:
+         dots = '.' * options['dots']
+      output( indi_found[0], options['maxgen'], dots )
       output_trailer()
    else:
       print( 'Found more than one start person', options['personid'], 'in', options['iditem'], file=sys.stderr )
