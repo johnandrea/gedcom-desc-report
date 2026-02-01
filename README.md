@@ -38,7 +38,7 @@ If missing the name of the top person is used.
 
 Number of dots to prefix every line. Default is 4. If less than 1, tabs will be used.
 
---maxgen = maximum generations to show. If missing, there is no limit.
+--maxgen = maximum generations to show. If missing, there is no limit. The person at the top of the list is generation 1.
 
 --libpath=directory-containing-readgedcom
 
