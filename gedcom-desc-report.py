@@ -17,7 +17,7 @@ import os
 
 
 def get_version():
-    return '0.0.3'
+    return '0.0.4'
 
 
 def load_my_module( module_name, relative_path ):
@@ -168,7 +168,7 @@ def get_name( indi, style, line_break=' ' ):
           # remove any suffix after the end slash
           result = re.sub( r'/[^/]*$', '', result ).replace('/','').strip()
 
-          if style == 'html'
+          if style == 'html':
              # escape quotes
              result = result.replace('"','&quot;').replace("'","&rsquo;")
 
@@ -215,25 +215,25 @@ def escape_rtf( s ):
 
 
 def output_header( indi, title ):
-    #{\\rtf1\\ansi\\deff0
-    #
-    #{\\fonttbl
-    #{\\f0 Times New Roman;}
-    #{\\f1 Helvetica;}
-    #}
-    #
-    #\\deflang1033\\widowctrl
-    #\\margl275 \\margr275 \\margt275 \\margb275
-    #
-    #{\\pard\\b1\\fs36
-    # <title>
-    # \\b0\\par}
-    #
-    #  {\\footer\\f1\\fs15\\b1\\qr <date> \\tab $url \\b0\\footer}
+    print( '{\\rtf1\\ansi\\deff0' )
+    print( '' )
+    print( '{\\fonttbl' )
+    print( '{\\f0 Times New Roman;}' )
+    print( '{\\f1 Helvetica;}' )
+    print( '{\\f2 Courier;}' )
+    print( '}' )
+    print( '' )
+    print( '\\deflang1033\\widowctrl' )
+    print( '\\margl275 \\margr275 \\margt275 \\margb275' )
+    print( '' )
+    print( '{\\pard\\b1\\fs36' )
     if title:
-       print( title )
+       print( escape_rtf( title ) )
     else:
        print( 'Descendents of', get_name(indi, name_style) )
+    print( ' \\b0\\par}' )
+    print( '' )
+    print( '{\\footer\\f1\\fs15\\b1\\qr <date> \\tab $url \\b0\\footer}' )
     print( '' )
 
 
@@ -241,19 +241,24 @@ def output_trailer():
     print( '}' )
 
 
+def output_single_name( name, prefix ):
+    # the prefix ought to be fixed width to make spouse names align
+    print( '\\f2', prefix, '\\f0', name )
+
+
 def output_family_names( indi, fam, gen, dots ):
     prefix = dots + str(gen)
-    print( prefix, get_name(indi, name_style) )
+    output_single_name( get_name(indi, name_style), prefix )
     partner = find_other_partner( indi, fam )
     prefix = ' ' * len(prefix)
     name = '?'
     if partner:
        name = get_name(partner, name_style)
-    print( prefix + '+', name )
+    output_single_name( '+ ' + name, prefix )
 
 
 def output_indi_name( indi, gen, dots ):
-    print( dots + str(gen), get_name(indi, name_style) )
+    print( '\\f2 ' + dots + str(gen) + '\\f0 ', get_name(indi, name_style) )
 
 
 def output( start_indi, max_gen, dots ):
