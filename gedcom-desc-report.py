@@ -18,7 +18,7 @@ import os
 
 
 def get_version():
-    return '0.1'
+    return '0.1.1'
 
 
 def load_my_module( module_name, relative_path ):
@@ -216,7 +216,7 @@ def escape_rtf( s ):
 
 
 def output_header( indi, title ):
-    # regular text will be Times New Roman size ?
+    # regular text will be Times New Roman size 14
     # and Courier for the line prefix
     # title text will be Times New Roman size 30
     # footer text will be Helvetica size 18
@@ -235,7 +235,7 @@ def output_header( indi, title ):
     if title:
        print( escape_rtf( title ) )
     else:
-       print( 'Descendents of', get_name(indi, name_style) )
+       print( 'Descendant list of', get_name(indi, name_style) )
     print( ' \\b0\\par}' )
     print( '' )
     print( '{\\footer\\f1\\fs18\\b1\\qr' )
@@ -250,7 +250,7 @@ def output_trailer():
 
 def output_single_name( name, prefix ):
     # the prefix ought to be fixed width font to make spouse names align
-    print( '\\line\\f2{' + prefix + ' }\\f0{' + name + '}' )
+    print( '\\line\\f2\\fs14{' + prefix + ' }\\f0\\fs14{' + name + '}' )
 
 
 def output_family_names( indi, fam, gen, dots ):
