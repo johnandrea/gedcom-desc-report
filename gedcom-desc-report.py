@@ -18,7 +18,7 @@ import os
 
 
 def get_version():
-    return '0.2'
+    return '0.3'
 
 
 def load_my_module( module_name, relative_path ):
@@ -293,6 +293,14 @@ name_style = 'display'
 
 options = get_program_options()
 
+if options['maxgen'] < 1:
+   print( 'Maxium generations must be greater than zero.', file=sys.stderr )
+   sys.exit(1)
+if options['dots'] > 12:
+   print( 'Warning: Reducing excessive dots.', file=sys.stderr )
+   options['dots'] = 12
+
+
 readgedcom = load_my_module( 'readgedcom', options['libpath'] )
 
 ikey = readgedcom.PARSED_INDI
@@ -304,7 +312,7 @@ indi_found = find_person( options['personid'], options['iditem'] )
 if indi_found:
    if len( indi_found ) == 1:
       output_header( indi_found[0], options['title'] )
-      dots = '\\tab'
+      dots = '{\\tab}'
       if options['dots'] > 0:
          dots = '.' * options['dots']
       output( indi_found[0], options['maxgen'], dots )
