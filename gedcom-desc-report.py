@@ -17,7 +17,7 @@ import os
 
 
 def get_version():
-    return '0.0.2'
+    return '0.0.3'
 
 
 def load_my_module( module_name, relative_path ):
@@ -52,7 +52,7 @@ def get_program_options():
     results = dict()
 
     results['dots'] = 4
-    results['maxgen'] = 1_000_000
+    results['maxgen'] = 1_000_000 #just an impossibly large number
     results['title'] = None
     results['personid'] = None
     results['iditem'] = 'xref'
@@ -168,7 +168,7 @@ def get_name( indi, style, line_break=' ' ):
           # remove any suffix after the end slash
           result = re.sub( r'/[^/]*$', '', result ).replace('/','').strip()
 
-          if style == 'html':
+          if style == 'html'
              # escape quotes
              result = result.replace('"','&quot;').replace("'","&rsquo;")
 
@@ -233,7 +233,7 @@ def output_header( indi, title ):
     if title:
        print( title )
     else:
-       print( 'Descendents of', get_name(indi,'html') )
+       print( 'Descendents of', get_name(indi, name_style) )
     print( '' )
 
 
@@ -243,17 +243,17 @@ def output_trailer():
 
 def output_family_names( indi, fam, gen, dots ):
     prefix = dots + str(gen)
-    print( prefix, get_name(indi,'html') )
+    print( prefix, get_name(indi, name_style) )
     partner = find_other_partner( indi, fam )
     prefix = ' ' * len(prefix)
     name = '?'
     if partner:
-       name = get_name(partner,'html')
+       name = get_name(partner, name_style)
     print( prefix + '+', name )
 
 
 def output_indi_name( indi, gen, dots ):
-    print( dots + str(gen), get_name(indi,'html') )
+    print( dots + str(gen), get_name(indi, name_style) )
 
 
 def output( start_indi, max_gen, dots ):
@@ -275,6 +275,9 @@ def output( start_indi, max_gen, dots ):
 
     output_desc( start_indi, 1, '' )
 
+
+# the type of name converted name suited for rtf output
+name_style = 'html'
 
 options = get_program_options()
 
