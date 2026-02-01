@@ -17,7 +17,7 @@ import os
 
 
 def get_version():
-    return '0.0.1'
+    return '0.0.2'
 
 
 def load_my_module( module_name, relative_path ):
@@ -133,6 +133,27 @@ def get_indi_years( indi ):
     return result
 
 
+def find_other_partner( indi, fam ):
+    result = None
+
+    other_partners = dict()
+    other_partners['husb'] = 'wife'
+    other_partners['wife'] = 'husb'
+
+    other = None
+    for partner in other_partners:
+        if partner in data[fkey][fam]:
+           if indi == data[fkey][fam][partner][0]:
+              other = other_partners[partner]
+              break
+
+    if other:
+       if other in data[fkey][fam]:
+          result = data[fkey][fam][other][0]
+
+    return result
+
+
 def get_name( indi, style, line_break=' ' ):
     # ouput formats deal with text in different "styles" for non-ascii characters
 
@@ -205,27 +226,34 @@ def output_header( indi, title ):
     #\\margl275 \\margr275 \\margt275 \\margb275
     #
     #{\\pard\\b1\\fs36
-    # Northside Businesses Owned By Those of Lebanese Descent
+    # <title>
     # \\b0\\par}
     #
-    # footer-
-    #  {\\footer\\f1\\fs15\\b1\\qr $date \\tab $url \\b0\\footer}
+    #  {\\footer\\f1\\fs15\\b1\\qr <date> \\tab $url \\b0\\footer}
     if title:
        print( title )
     else:
        print( 'Descendents of', get_name(indi,'html') )
+    print( '' )
 
 
 def output_trailer():
     print( '}' )
 
 
-def output_family_names( indi, fam, gen, prefix ):
-    print( prefix + str(gen), get_name(indi,'html'), indi, 'in fam', fam )
+def output_family_names( indi, fam, gen, dots ):
+    prefix = dots + str(gen)
+    print( prefix, get_name(indi,'html') )
+    partner = find_other_partner( indi, fam )
+    prefix = ' ' * len(prefix)
+    name = '?'
+    if partner:
+       name = get_name(partner,'html')
+    print( prefix + '+', name )
 
 
-def output_indi_name( indi, gen, prefix ):
-    print( prefix + str(gen), get_name(indi,'html'), indi )
+def output_indi_name( indi, gen, dots ):
+    print( dots + str(gen), get_name(indi,'html') )
 
 
 def output( start_indi, max_gen, dots ):
