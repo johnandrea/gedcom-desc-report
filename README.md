@@ -1,2 +1,55 @@
 # gedcom-desc-report
-Create a descendent report from a genealogy GEDCOM file to be used from the command line for non-interactive operation. The output is an RTF formatted file which can be converted to PDF or other formats.
+Create a descendent report from a genealogy GEDCOM file to be used from the command line for non-interactive operation.
+
+The output is an RTF formatted file which can be converted to PDF or other formats.
+
+## Options ##
+
+--version
+
+Display version number then exit.
+
+--personid= id-value
+  
+The id of the person to select for the top of the tree. Used in combination with the iditem option.
+By default this is the the individual xref in the gedcom file and so may be given as for example
+as @i42@ or I42 or just 42.
+
+--iditem=  XREF, REFN or user specified such as EXID, REFNUM, etc.
+  
+The tag in the gedcom file used to match the specified person. Default is xref which is the gedcom individual identifier.
+  When using a non-xref tag, the given personid value must match exactly the value in the gedcom file. The match makes
+  use of the readgedcom function find_individuals so an id name such as birth.date may be used or for a custom event such as
+  event.extraref If more than one match is found the first (unordered) one is taken.
+  
+--dates
+  
+Include birth and death years with the names.
+
+--title = page title
+
+If missing the name of the top person is used.
+
+--maxgen = maximum generations to show. If missing, there is no limit.
+
+--libpath=directory-containing-readgedcom
+
+Location containing the readgedcom.py library file. The path is relative to the program being used. An absolute path will not work. Default is the same location as the program (".").
+
+## Usage ##
+
+Minimal usage
+```
+gedcom-desc-report.py gedcom-file > file.rtf
+```
+
+## Installation ##
+
+- Requires python 3.6+
+- Copy Python file and supporting style file(s).
+- also requires gedcom library [readgedcom.py](https://github.com/johnandrea/readgedcom)
+
+## Limitations ##
+  
+- A loop in a family might be trouble
+- Might not escape all non-Latin characters
