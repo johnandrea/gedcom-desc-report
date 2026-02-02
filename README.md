@@ -34,6 +34,10 @@ Include birth and death years with the names.
 
 If missing the name of the top person is used.
 
+--preparer = name of person who prepared report
+
+If supplied the name will be listed on the page footer along with the current time.
+
 --dots = number of dots
 
 Number of dots to prefix every line. Default is 4. If less than 1, tabs will be used.
@@ -51,6 +55,11 @@ Minimal usage
 gedcom-desc-report.py gedcom-file > file.rtf
 ```
 
+More complete usage
+```
+gedcom-desc-report.py --title="Example report" --preparer="John A." --dots=2 --prerson=12 family.ged > family.rtf
+```
+
 ## Installation ##
 
 - Requires python 3.6+
@@ -59,5 +68,4 @@ gedcom-desc-report.py gedcom-file > file.rtf
 
 ## Limitations ##
   
-- A loop in a family might be trouble
-- Might not escape all non-Latin characters
+- Not tested with Unicode characters
