@@ -16,7 +16,7 @@ import os
 
 
 def get_version():
-    return '1.1'
+    return '1.1.1'
 
 
 def load_my_module( module_name, relative_path ):
@@ -316,10 +316,10 @@ fkey = readgedcom.PARSED_FAM
 
 data = readgedcom.read_file( options['infile'] )
 
-indi_found = find_person( options['personid'].strip(), options['iditem'].strip() )
+indi_found = find_person( options['personid'], options['iditem'] )
 if indi_found:
    if len( indi_found ) == 1:
-      output_header( indi_found[0], options['title'].strip(), options['preparer'].strip() )
+      output_header( indi_found[0], options['title'], options['preparer'] )
       output( indi_found[0], options['maxgen'], dots )
       output_trailer()
    else:
