@@ -16,7 +16,7 @@ import os
 
 
 def get_version():
-    return '1.0'
+    return '1.1'
 
 
 def load_my_module( module_name, relative_path ):
@@ -50,6 +50,7 @@ def load_my_module( module_name, relative_path ):
 def get_program_options():
     results = dict()
 
+    results['preparer'] = None
     results['dots'] = 4
     results['maxgen'] = 1_000_000 #just an impossibly large number
     results['title'] = None
@@ -71,8 +72,12 @@ def get_program_options():
     arg_help = 'Maximum number of generations. If missing there is no limit'
     parser.add_argument( '--maxgen', default=str(results['maxgen']), type=int, help=arg_help )
 
-    arg_help = 'Title. If missing: name of top pereon.'
+    arg_help = 'Title. If missing or blank: name of top pereon.'
     parser.add_argument( '--title', type=str, help=arg_help )
+
+    arg_help = 'Preparer. Name placed on the page footer along with the date.'
+    parser.add_argument( '--preparer', type=str, help=arg_help )
+
 
     arg_help = 'Id for the person chosen at the top of the report.'
     parser.add_argument( '--personid', type=str, help=arg_help )
@@ -92,6 +97,7 @@ def get_program_options():
 
     args = parser.parse_args()
 
+    results['preparer'] = args.preparer
     results['dots'] = int( args.dots )
     results['maxgen'] = int( args.maxgen )
     results['title'] = args.title
@@ -213,11 +219,11 @@ def escape_rtf( s ):
     return s
 
 
-def output_header( indi, title ):
-    # regular text will be Times New Roman size 28 > 14
+def output_header( indi, title, preparer ):
+    # regular text will be Times New Roman size 28 => 14
     # and Courier for the line prefix
-    # title text will be Times New Roman size 50 > 25
-    # footer text will be Helvetica size 30 > 15
+    # title text will be Times New Roman size 50 => 25
+    # footer text will be Helvetica size 24 => 12
     print( '{\\rtf1\\ansi\\deff0' )
     print( '' )
     print( '{\\fonttbl' )
@@ -236,7 +242,9 @@ def output_header( indi, title ):
        print( 'Descendant list of', get_name(indi, name_style) )
     print( ' \\b0\\par}' )
     print( '' )
-    print( '{\\footer\\f1\\fs30\\b1\\qr' )
+    print( '{\\footer\\f1\\fs24\\b1\\qr' )
+    if preparer:
+       print( 'Prepared by', escape_rtf(preparer), '\\tab' )
     print( datetime.today().strftime('%Y-%b-%d %H:%M') )
     print( '\\b0\\footer}' )
     print( '' )
@@ -297,7 +305,9 @@ if options['maxgen'] < 1:
 if options['dots'] > 12:
    print( 'Warning: Reducing excessive dots.', file=sys.stderr )
    options['dots'] = 12
-
+dots = '{\\tab}'
+if options['dots'] > 0:
+   dots = '.' * options['dots']
 
 readgedcom = load_my_module( 'readgedcom', options['libpath'] )
 
@@ -306,13 +316,10 @@ fkey = readgedcom.PARSED_FAM
 
 data = readgedcom.read_file( options['infile'] )
 
-indi_found = find_person( options['personid'], options['iditem'] )
+indi_found = find_person( options['personid'].strip(), options['iditem'].strip() )
 if indi_found:
    if len( indi_found ) == 1:
-      output_header( indi_found[0], options['title'] )
-      dots = '{\\tab}'
-      if options['dots'] > 0:
-         dots = '.' * options['dots']
+      output_header( indi_found[0], options['title'].strip(), options['preparer'].strip() )
       output( indi_found[0], options['maxgen'], dots )
       output_trailer()
    else:
