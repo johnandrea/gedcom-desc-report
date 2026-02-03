@@ -16,7 +16,7 @@ import os
 
 
 def get_version():
-    return '1.1.1'
+    return '1.2'
 
 
 def load_my_module( module_name, relative_path ):
@@ -77,7 +77,6 @@ def get_program_options():
 
     arg_help = 'Preparer. Name placed on the page footer along with the date.'
     parser.add_argument( '--preparer', type=str, help=arg_help )
-
 
     arg_help = 'Id for the person chosen at the top of the report.'
     parser.add_argument( '--personid', type=str, help=arg_help )
@@ -222,8 +221,9 @@ def escape_rtf( s ):
 def output_header( indi, title, preparer ):
     # regular text will be Times New Roman size 28 => 14
     # and Courier for the line prefix
-    # title text will be Times New Roman size 50 => 25
-    # footer text will be Helvetica size 24 => 12
+    # title text will be Helvetica size 50 => 25
+    # footer text will be Helvetica size 16 => 8
+    # Note: double backslash is needed to escape the backslash
     print( '{\\rtf1\\ansi\\deff0' )
     print( '' )
     print( '{\\fonttbl' )
@@ -235,14 +235,18 @@ def output_header( indi, title, preparer ):
     print( '\\deflang1033\\widowctrl' )
     print( '\\margl275 \\margr275 \\margt275 \\margb275' )
     print( '' )
-    print( '{\\pard\\b1\\fs50' )
+    # header
+    print( '{\\pard\\b1\\f1\\fs50' )
     if title:
        print( escape_rtf( title ) )
     else:
        print( 'Descendant list of', get_name(indi, name_style) )
     print( ' \\b0\\par}' )
     print( '' )
-    print( '{\\footer\\f1\\fs24\\b1\\qr' )
+    # footer
+    print( '{\\footer\\f1\\fs16\\qr{}' )
+    # page number
+    print( '{\\field{\\*\\fldinst {PAGE}}}\\tab' )
     if preparer:
        print( 'Prepared by', escape_rtf(preparer), '\\tab' )
     print( datetime.today().strftime('%Y-%b-%d %H:%M') )
@@ -256,14 +260,20 @@ def output_trailer():
 
 def output_single_name( name, prefix ):
     # the prefix ought to be fixed width font to make spouse names align
-    print( '\\line\\f2\\fs28{' + prefix + ' }\\f0\\fs28{' + name + '}' )
+    print( '\\line' )
+    if prefix:
+       print( '\\f2\\fs28{' + prefix + '}' )
+    print( '\\f0\\fs28{' + name + '}' )
 
 
 def output_family_names( indi, fam, gen, dots ):
-    prefix = dots + str(gen)
-    output_single_name( get_name(indi, name_style), prefix )
+    prefix = dots
+    output_single_name( str(gen) + ' ' + get_name(indi, name_style), prefix )
     partner = find_other_partner( indi, fam )
-    prefix = ' ' * len(prefix)
+    # partner gets spaces rather than dots
+    # be sure its not tabs
+    if 'tab' not in dots:
+       prefix = ' ' * len(prefix)
     name = '?'
     if partner:
        name = get_name(partner, name_style)
@@ -271,7 +281,7 @@ def output_family_names( indi, fam, gen, dots ):
 
 
 def output_indi_name( indi, gen, dots ):
-    output_single_name( get_name(indi, name_style), dots + str(gen) )
+    output_single_name( str(gen) + ' ' + get_name(indi, name_style), dots )
 
 
 def output( start_indi, max_gen, dots ):
