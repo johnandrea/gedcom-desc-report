@@ -16,7 +16,7 @@ import os
 
 
 def get_version():
-    return '1.2'
+    return '1.3'
 
 
 def load_my_module( module_name, relative_path ):
@@ -251,6 +251,9 @@ def output_header( indi, title, preparer ):
        print( 'Prepared by', escape_rtf(preparer), '\\tab' )
     print( datetime.today().strftime('%Y-%b-%d %H:%M') )
     print( '\\b0\\footer}' )
+    print( '' )
+    # comment is hidden when document is viewed or converted
+    print( '\\v{Produced by gedcom-desc-report v' + get_version() + '}\\v0' )
     print( '' )
 
 
