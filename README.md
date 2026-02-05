@@ -45,7 +45,9 @@ Number of dots to prefix every line. Default is 4. If less than 1, tabs will be 
 --maxgen= maximum generations to show. If missing, there is no limit. The person at the top of the list is generation 1.
 
 --namesize= size of font for the name
+
 --headsize= size of font for the title
+
 --footsize= size of font for the footer
 
 --libpath=directory-containing-readgedcom
