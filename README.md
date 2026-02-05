@@ -30,19 +30,23 @@ The tag in the gedcom file used to match the specified person. Default is xref w
   
 Include birth and death years with the names.
 
---title = page title
+--title= page title
 
 If missing the name of the top person is used.
 
---preparer = name of person who prepared report
+--preparer= name of person who prepared report
 
 If supplied the name will be listed on the page footer along with the current time.
 
---dots = number of dots
+--dots= number of dots
 
 Number of dots to prefix every line. Default is 4. If less than 1, tabs will be used.
 
---maxgen = maximum generations to show. If missing, there is no limit. The person at the top of the list is generation 1.
+--maxgen= maximum generations to show. If missing, there is no limit. The person at the top of the list is generation 1.
+
+--namesize= size of font for the name
+--headsize= size of font for the title
+--footsize= size of font for the footer
 
 --libpath=directory-containing-readgedcom
 
