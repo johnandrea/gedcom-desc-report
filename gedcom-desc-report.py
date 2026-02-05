@@ -16,7 +16,7 @@ import os
 
 
 def get_version():
-    return '1.3'
+    return '1.4'
 
 
 def load_my_module( module_name, relative_path ):
@@ -50,6 +50,9 @@ def load_my_module( module_name, relative_path ):
 def get_program_options():
     results = dict()
 
+    results['namesize'] = 14
+    results['headsize'] = 25
+    results['footsize'] = 8
     results['preparer'] = None
     results['dots'] = 4
     results['maxgen'] = 1_000_000 #just an impossibly large number
@@ -65,6 +68,13 @@ def get_program_options():
 
     arg_help = 'Show version then exit.'
     parser.add_argument( '--version', action='version', version=get_version() )
+
+    arg_help = 'Size of text for the names. Default: ' + str(results['namesize'])
+    parser.add_argument( '--namesize', default=str(results['namesize']), type=int, help=arg_help )
+    arg_help = 'Size of text for the header/title. Default: ' + str(results['headsize'])
+    parser.add_argument( '--headsize', default=str(results['headsize']), type=int, help=arg_help )
+    arg_help = 'Size of text for the footer. Default: ' + str(results['footsize'])
+    parser.add_argument( '--footsize', default=str(results['footsize']), type=int, help=arg_help )
 
     arg_help = 'Number of dots as prefix. Default: ' + str(results['dots'])
     parser.add_argument( '--dots', default=str(results['dots']), type=int, help=arg_help )
@@ -96,6 +106,9 @@ def get_program_options():
 
     args = parser.parse_args()
 
+    results['namesize'] = int( args.namesize )
+    results['headsize'] = int( args.headsize )
+    results['footsize'] = int( args.footsize )
     results['preparer'] = args.preparer
     results['dots'] = int( args.dots )
     results['maxgen'] = int( args.maxgen )
@@ -218,11 +231,7 @@ def escape_rtf( s ):
     return s
 
 
-def output_header( indi, title, preparer ):
-    # regular text will be Times New Roman size 28 => 14
-    # and Courier for the line prefix
-    # title text will be Helvetica size 50 => 25
-    # footer text will be Helvetica size 16 => 8
+def output_header( indi, title, preparer, font_sizes ):
     # Note: double backslash is needed to escape the backslash
     print( '{\\rtf1\\ansi\\deff0' )
     print( '' )
@@ -236,7 +245,7 @@ def output_header( indi, title, preparer ):
     print( '\\margl275 \\margr275 \\margt275 \\margb275' )
     print( '' )
     # header
-    print( '{\\pard\\b1\\f1\\fs50' )
+    print( '{\\pard\\b1\\f1' + font_sizes['headsize'] )
     if title:
        print( escape_rtf( title ) )
     else:
@@ -244,7 +253,7 @@ def output_header( indi, title, preparer ):
     print( ' \\b0\\par}' )
     print( '' )
     # footer
-    print( '{\\footer\\f1\\fs16\\qr{}' )
+    print( '{\\footer\\f1' + font_sizes['footsize'] + '\\qr{}' )
     # page number
     print( '{\\field{\\*\\fldinst {PAGE}}}\\tab' )
     if preparer:
@@ -261,17 +270,17 @@ def output_trailer():
     print( '}' )
 
 
-def output_single_name( name, prefix ):
+def output_single_name( name, prefix, font_size ):
     # the prefix ought to be fixed width font to make spouse names align
     print( '\\line' )
     if prefix:
-       print( '\\f2\\fs28{' + prefix + '}' )
-    print( '\\f0\\fs28{' + name + '}' )
+       print( '\\f2' + font_size + '{' + prefix + '}' )
+    print( '\\f0' + font_size + '{' + name + '}' )
 
 
-def output_family_names( indi, fam, gen, dots ):
+def output_family_names( indi, fam, gen, dots, font_size ):
     prefix = dots
-    output_single_name( str(gen) + ' ' + get_name(indi, name_style), prefix )
+    output_single_name( str(gen) + ' ' + get_name(indi, name_style), prefix, font_size )
     partner = find_other_partner( indi, fam )
     # partner gets spaces rather than dots
     # be sure its not tabs
@@ -280,18 +289,18 @@ def output_family_names( indi, fam, gen, dots ):
     name = '?'
     if partner:
        name = get_name(partner, name_style)
-    output_single_name( '+ ' + name, prefix )
+    output_single_name( '+ ' + name, prefix, font_size )
 
 
-def output_indi_name( indi, gen, dots ):
-    output_single_name( str(gen) + ' ' + get_name(indi, name_style), dots )
+def output_indi_name( indi, gen, dots, font_size ):
+    output_single_name( str(gen) + ' ' + get_name(indi, name_style), dots, font_size )
 
 
-def output( start_indi, max_gen, dots ):
+def output( start_indi, max_gen, dots, font_sizes ):
     def output_desc( indi, gen, show_dots ):
         if 'fams' in data[ikey][indi]:
            for fam in data[ikey][indi]['fams']:
-               output_family_names( indi, fam, gen, show_dots )
+               output_family_names( indi, fam, gen, show_dots, font_sizes['namesize'] )
                if fam not in fams_touched:
                   fams_touched.append( fam )
                   if gen < max_gen:
@@ -299,12 +308,22 @@ def output( start_indi, max_gen, dots ):
                         for child in data[fkey][fam]['chil']:
                             output_desc( child, gen+1, show_dots + dots )
         else:
-           output_indi_name( indi, gen, show_dots )
+           output_indi_name( indi, gen, show_dots, font_sizes['namesize'] )
 
     # prevent loop
     fams_touched = []
 
     output_desc( start_indi, 1, '' )
+
+
+def check_font_sizes( item, min_size, max_size ):
+    global options
+    if options[item] < min_size:
+       print( 'Warning: increasing tiny', item, '=>', min_size, file=sys.stderr )
+       options[item] = min_size
+    if options[item] > max_size:
+       print( 'Warning: reducing excessive', item, '=>', max_size, file=sys.stderr )
+       options[item] = max_size
 
 
 # the type of name converted name suited for rtf output
@@ -316,11 +335,16 @@ if options['maxgen'] < 1:
    print( 'Maxium generations must be greater than zero.', file=sys.stderr )
    sys.exit(1)
 if options['dots'] > 12:
-   print( 'Warning: Reducing excessive dots.', file=sys.stderr )
+   print( 'Warning: reducing excessive dots.', file=sys.stderr )
    options['dots'] = 12
 dots = '{\\tab}'
 if options['dots'] > 0:
    dots = '.' * options['dots']
+
+check_font_sizes( 'namesize', 5, 35 )
+check_font_sizes( 'headsize', 8, 49 )
+check_font_sizes( 'footsize', 4, 20 )
+
 
 readgedcom = load_my_module( 'readgedcom', options['libpath'] )
 
@@ -332,8 +356,15 @@ data = readgedcom.read_file( options['infile'] )
 indi_found = find_person( options['personid'], options['iditem'] )
 if indi_found:
    if len( indi_found ) == 1:
-      output_header( indi_found[0], options['title'], options['preparer'] )
-      output( indi_found[0], options['maxgen'], dots )
+
+      # define the font size specifiers
+      # rtf specifier is double display font
+      font_sizes = dict()
+      for item in ['namesize','headsize','footsize']:
+          font_sizes[item] = '\\fs' + str( options[item] * 2 )
+
+      output_header( indi_found[0], options['title'], options['preparer'], font_sizes )
+      output( indi_found[0], options['maxgen'], dots, font_sizes )
       output_trailer()
    else:
       print( 'Found more than one start person', options['personid'], 'in', options['iditem'], file=sys.stderr )
